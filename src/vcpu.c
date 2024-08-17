@@ -1,55 +1,29 @@
-#include <stdbool.h>
+#include "cpu.h"
+#include "core_risc16.h"
 #include <stdio.h>
-#include <threads.h>
+#include <signal.h>
+#include <stdbool.h>
 #include <time.h>
-#include <unistd.h>
 
-typedef struct
-{
-    volatile int foo;
-    volatile bool done;
-} Data;
+static volatile bool running = true;
 
-Data data;
-
-int test_func(void *user_data)
-{
-    Data *data = (Data *)user_data;
-    struct timespec ts;
-
-    ts.tv_sec = 0;
-    ts.tv_nsec = 100000000;
-
-    while (!data->done)
-    {
-        printf("Foo is %d\n", data->foo);
-        thrd_sleep(&ts, NULL);
-    }
-    return 0;
+void int_handler(int dummy) {
+    running = false;
 }
 
-int main(int argc, char **argv)
-{
-    thrd_t thrd;
-
-    data.done = false;
-    data.foo = 0;
-
-    if (thrd_success != thrd_create(&thrd, test_func, &data))
-    {
-        fprintf(stderr, "Failed to create thread\n");
-        return 1;
+int main(int argc, char **argv) {
+    printf("vcpu v0.01\n");
+    Core *core = core_risc16_create();
+    Cpu *cpu = cpu_create(core);
+    signal(SIGINT, int_handler);
+    struct timespec ts;
+    ts.tv_nsec = 100000000;
+    ts.tv_sec = 0;
+    while (running) {
+        cpu_next(cpu);
+        nanosleep(&ts, NULL);
     }
+    printf("vcpu done, ran %d cycles\n", cpu->cycle);
+    cpu_destroy(cpu);   
 
-    for (int i = 0; i < 10; i++)
-    {
-        data.foo = i;
-        sleep(1);
-    }
-    data.done = true;
-    int result;
-    thrd_join(thrd, &result);
-    printf("Thread returned %d\n", result);
-
-    return 0;
 }
