@@ -7,7 +7,7 @@
 
 typedef struct {
     Component component;
-    uint8_t *outputs;
+    uint8_t output;
     uint8_t *clock;
     uint32_t mask;
     int width;
@@ -21,6 +21,8 @@ Counter *counter_create(char *name, int width, uint8_t *clock);
 void counter_pre_clock(Component *component);
 
 void counter_post_clock(Component *component);
+
+uint8_t *counter_output(Counter *counter);
 
 void counter_destroy(Counter *counter);
 

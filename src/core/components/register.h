@@ -8,19 +8,21 @@
 
 typedef struct {
     Component component;
-    uint8_t *inputs[8];
+    uint8_t *input;
     uint8_t *clock;
-    uint8_t values[8];    
+    uint8_t output;
     uint8_t last_clock;
-    uint8_t next_value[8];
+    uint8_t next_value;
     bool have_new_value;
 } Register;
 
-Register *register_create(char *name, uint8_t **inputs, uint8_t *clock);
+Register *register_create(char *name, uint8_t *input, uint8_t *clock);
 
 void register_pre_clock(Component *component);
 
 void register_post_clock(Component *component);
+
+uint8_t *register_output(Register *reg);
 
 void register_destroy(Register *reg);
  
