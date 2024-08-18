@@ -3,6 +3,6 @@
 
 #include "core.h"
 
-Core *core_risc16_create();
+Core *core_risc16_create(uint8_t *clock);
 
 #endif

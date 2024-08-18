@@ -13,7 +13,8 @@ void int_handler(int dummy) {
 
 int main(int argc, char **argv) {
     printf("vcpu v0.01\n");
-    Core *core = core_risc16_create();
+    uint8_t clock = 0;
+    Core *core = core_risc16_create(&clock);
     Cpu *cpu = cpu_create(core);
     signal(SIGINT, int_handler);
     struct timespec ts;

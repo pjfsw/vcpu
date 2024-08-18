@@ -1,6 +1,7 @@
 #include "counter.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
 Counter *counter_create(char *name, int width, uint8_t *clock) {
     Counter *cnt = calloc(1, sizeof(Counter));
@@ -18,7 +19,9 @@ void counter_pre_clock(Component *component) {
     if (clock && !cnt->last_clock) {
         cnt->value = (cnt->value + 1) & cnt->mask;
         cnt->has_new_value = true;
+        printf("Counter[%s] PRE: %d\n", cnt->component.name, cnt->value);
     }
+
     cnt->last_clock = clock;
 }
 
